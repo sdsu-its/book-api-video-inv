@@ -50,3 +50,6 @@ If either the username or password or incorrect a status **404** is returned, al
 }
 ```
 {% endmethod %}
+
+# Users
+
