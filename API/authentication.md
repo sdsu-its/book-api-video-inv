@@ -10,6 +10,8 @@ This request is used to authenticate a user, be it to create a new transaction, 
 
 The password needs to be sent as a Base64 encoded string. This allows for complex passwords, that would break the JSON formatting if not encoded properly.
 
+If the username and password are correct, the response from the server will contain a `session` header. This is your session token. You will want to save this, possible in a Cookie, Global Variable, etc. You should keep it relatively secure, since it is used to authenticate with the API for all further interactions, but will eventually expire. The tokens TTL is set in the Server's Vault configuration[^1].
+
 {% sample lang="js" %}
 Login request using jQuery. You will need to fill the object yourself, this example uses example content selectors.
 
@@ -51,5 +53,4 @@ If either the username or password or incorrect a status **404** is returned, al
 ```
 {% endmethod %}
 
-# Users
-
+[^1] The Vault settings can be changed in real time, however the WebApp would need to be restarted for the TTL changes to take effect. More information on the Vault configuration can be found in the WebApp repo at: https://github.com/sdsu-its/video-inv.
