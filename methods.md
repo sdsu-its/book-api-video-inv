@@ -1,30 +1,52 @@
-# Defining Methods
+# Authentication
+Authentication with the API is initially handled via Username and Password authentication for the initial Login request. Afterward, all requests are authenticated with a secure session token, which is obtained during the login process, and needs to be included as a header in EVERY request made to the API.
 
-Methods allow you to smoothly display code examples in different languages.
+Session tokens are not everlasting, and will eventually expire, at which point you will receive a **401 - Unauthorized** error message. Tokens cannot be renewed, and you will need to authenticate via username and password to obtain a new token.
 
 {% method %}
-## My first method
+## POST `/login`
 
-My first method exposes how to print a message in JavaScript and Go.
+This request is used to authenticate a user, be it to create a new transaction, or access the Admin tools. It can also be used to verify if a user has entered their password correctly, for example if they are updating their password.
+
+The password needs to be sent as a Base64 encoded string. This allows for complex passwords, that would break the JSON formatting if not encoded properly.
 
 {% sample lang="js" %}
-Here is how to print a message to `stdout` using JavaScript.
+Login request using jQuery. You will need to fill the object yourself, this example uses example content selectors.
 
 ```js
-console.log('My first method');
-```
+var payload = {};
+payload.username = $('#loginUsername').val();
+payload.username = bota($('#loginPassword').val());
 
-{% sample lang="go" %}
-Here is how to print a message to `stdout` using Go.
-
-```go
-fmt.Println("My first method")
+$.ajax({
+  type: "POST",
+  url: API_ROOT + '/login',
+  data: payload,
+  success: success,
+  dataType: 'json'
+});
 ```
 
 {% common %}
-Whatever language you are using, the result will be the same.
+If successful (**200**), the user object corresponding to the username and password pair that were submitted is returned.
 
-```bash
-$ My first method
+```json
+{
+  "dbID": 1,
+  "username": "admin",
+  "firstName": "Administrator",
+  "lastName": "User",
+  "supervisor": true
+}
+```
+Also, a `session` header will be included in the response, this is the session token that you will need to include in all future requests, and will serve to identify the user.
+
+If either the username or password or incorrect a status **404** is returned, along with a JSON error message. All expected errors will return a status message, along with a possible explanation of why the error occurred.
+
+```json
+{
+  "status": "Error",
+  "message": "That user does not exist or the password is incorrect."
+}
 ```
 {% endmethod %}
