@@ -23,8 +23,6 @@ $.ajax({
 Retrieving information on for all categories.
 ```js
 $.ajax({
-  var categoryID = 100;
-
   type: "GET",
   url: API_ROOT + '/category',
   success: success,
@@ -90,3 +88,46 @@ If the user is allowed to create categories, and the category was created a stat
 If the user is not permitted to create new categories, a status of **403 - Forbidden** is returned, along with a JSON status message.
 {% endmethod %}
 
+{% method %}
+## PUT `/category`
+
+The PUT verb is used to update a category. The category must exist before it is updated, else an error message is returned. The Category must be identified via its ID when it is updated, since all other fields are mutable.
+
+{% sample lang="js" %}
+We will update category 100, with the name of "foo".
+
+```js
+var payload = {};
+payload.id = 100;
+payload.name = "foo";
+
+$.ajax({
+type: "PUT",
+url: API_ROOT + '/category',
+data: payload,
+dataType: 'json',
+success: success,
+headers: {"session": SESSION_TOKEN}
+});
+```
+
+{% common %}
+If the user is allowed to create categories, and the category was updated successfully a status of **200 - OK** is returned, along with a status message.
+
+```json
+{
+  "message": "Category Updated"
+}
+```
+
+If no category with the specified ID does not exist, a status of **404 - Not Found** is returned, along with a JSON status message.
+
+```json
+{
+  "status": "Error",
+  "message": "Category Does not Exist"
+}
+```
+
+If the user is not permitted to create new categories, a status of **403 - Forbidden** is returned, along with a JSON status message.
+{% endmethod %}
