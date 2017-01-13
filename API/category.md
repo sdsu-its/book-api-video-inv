@@ -191,14 +191,15 @@ If the user is not permitted to create new categories, a status of **403 - Forbi
 
 Category Icons are handled through the Category endpoint, but with a somewhat different URL. This request does not require a session header, which allows it to be used in an `<img>` tag. However, an error code (404) is returned if an icon has no icon defined. 
 
-You may want to add an `onerror` listener to the img tags to deal with this.  For example, for Category ID: 123...
+The image is served directly from the endpoint, with the proper headers and encoding. Images will always be PNGs, and will be approximately 150px.
+
+{% common %}
+You may want to add an `onerror` listener to the img tags to deal with this. For example, for Category ID: 123...
 ``` html
 <img src="api/category/icon/123" class="categoryIcon" onerror="this.style.visibility ='hidden'">
 ```
 
 Using `visibility: hidden` keeps the spacing as if an icon were present, but hides the broken image icon that many browsers display if an error occurs while loading an image.
-
-The image is served directly from the endpoint, with the proper headers and encoding. Images will always be PNGs, and will be approximately 150px.
 
 {% endmethod %}
 
