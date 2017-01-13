@@ -185,3 +185,62 @@ If no category with the specified ID does not exist, a status of **404 - Not Fou
 
 If the user is not permitted to create new categories, a status of **403 - Forbidden** is returned, along with a JSON status message.
 {% endmethod %}
+
+{% method %}
+## GET `/category/icon/:id`
+
+Category Icons are handled through the Category endpoint, but with a somewhat different URL. This request does not require a session header, which allows it to be used in an `<img>` tag. However, an error code (404) is returned if an icon has no icon defined. 
+
+You may want to add an `onerror` listener to the img tags to deal with this.  For example, for Category ID: 123...
+``` html
+<img src="api/category/icon/123" class="categoryIcon" onerror="this.style.visibility ='hidden'">
+```
+
+Using `visibility: hidden` keeps the spacing as if an icon were present, but hides the broken image icon that many browsers display if an error occurs while loading an image.
+
+The image is served directly from the endpoint, with the proper headers and encoding. Images will always be PNGs, and will be approximately 150px.
+
+{% endmethod %}
+
+{% method %}
+## POST `/category/updateICO/:id`
+
+Updating a category icon is handled separately from updating a category's name, because a multi-part form message is required. The name of the file is important, since the extension is used to determine the format of the file. The image will be converted to PNG with a white background once uploaded, and will be resized to a pre-defined max size (150px be default).
+
+A session token is also required with this request.
+
+{% sample lang="js" %}
+Assuming that `icon` is a file that was collected via an `<input type="file">` tag, and that `categoryID` is the category we would like to update.
+
+```js
+
+    var formData = new FormData();
+    formData.append('icon', icon, icon.name);
+
+    var xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange = function () {
+       console.log(xmlHttp.responseText);
+    };
+
+    xmlHttp.open('POST', "api/category/updateICO/" + categoryID);
+    xmlHttp.setRequestHeader("session", SESSION);
+    xmlHttp.send(formData);
+
+```
+
+{% common %}
+If the user is allowed to update categories, and the category icon was updated was created a status of **202 - Accepted** is returned, along with a status message.
+
+```json
+{
+  "message": "Category 123 icon updated"
+}
+```
+
+Should an error occur in processing the file (which is unlikely, but still possible), a status of **500 - Internal Server Error** will be returned, with a message on what went wrong.
+
+If the user is not permitted to update categories, a status of **403 - Forbidden** is returned, along with a JSON status message.
+{% endmethod %}
+
+
