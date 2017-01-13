@@ -131,3 +131,57 @@ If no category with the specified ID does not exist, a status of **404 - Not Fou
 
 If the user is not permitted to create new categories, a status of **403 - Forbidden** is returned, along with a JSON status message.
 {% endmethod %}
+
+{% method %}
+## DELETE `/category`
+
+The DELETE verb is used to delete a category. Similar to the create and update endpoints, the user must be an administrator to perform this action. Before a delete can be executed, all items need to be removed from the category. This is not done automatically, can if this is not the case, the request fails.
+
+Only the category ID needs to be supplied in the request payload.
+
+{% sample lang="js" %}
+We will delete category 100.
+
+```js
+var payload = {};
+payload.id = 100;
+
+$.ajax({
+type: "DELETE",
+url: API_ROOT + '/category',
+data: payload,
+dataType: 'json',
+success: success,
+headers: {"session": SESSION_TOKEN}
+});
+```
+
+{% common %}
+If the user is allowed to delete categories, and the category was updated deleted a status of **200 - OK** is returned, along with a status message.
+
+```json
+{
+  "message": "Category Deleted"
+}
+```
+
+If the category still has items assigned to it, a status of **400 - Bad Request** is returned, along with a JSON status message.
+
+```json
+{
+  "status": "Error",
+  "message": "Category has items. Cannot Delete."
+}
+```
+
+If no category with the specified ID does not exist, a status of **404 - Not Found** is returned, along with a JSON status message.
+
+```json
+{
+"status": "Error",
+"message": "Category Does not Exist"
+}
+```
+
+If the user is not permitted to create new categories, a status of **403 - Forbidden** is returned, along with a JSON status message.
+{% endmethod %}
